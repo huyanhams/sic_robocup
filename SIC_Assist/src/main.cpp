@@ -4,15 +4,15 @@
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-pros::Motor intake(1);
+pros::Motor intake(13);
 
 // motor groups
-pros::MotorGroup leftMotors({-5, 4, -3},
+pros::MotorGroup leftMotors({1, 11},
                             pros::MotorGearset::green); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({6, -9, 7}, pros::MotorGearset::green); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup rightMotors({-10, -20}, pros::MotorGearset::green); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
-pros::Imu imu(10);
+pros::Imu imu(15);
 
 // tracking wheels
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
@@ -123,10 +123,26 @@ void competition_initialize() {}
  * Runs in driver control
  */
 void opcontrol() {
-    chassis.setPose(-114, 170, 0);
-    chassis.moveToPoint(50, 80, 4000);
+    while (true) {
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        chassis.arcade(leftY, rightX);
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            intake.move_velocity(200);
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+            intake.move_velocity(-200);
+        } else {
+            intake.move_velocity(0);
+        }
+        pros::delay(25);
+    }
+    /*
+    chassis.setPose(0, 0, 0);
+    chassis.moveToPoint(0, 80, 4000);
+    chassis.turnToHeading(-90, 4000); 
     intake.move_velocity(200);
     chassis.moveToPose(120, -150, 0, 4000);
-    //chassis.moveToPoint(120, -100, 4000);
-    //chassis.moveToPose(120, -150, 0, 4000);
+    chassis.moveToPoint(120, -100, 4000);
+    chassis.moveToPose(120, -150, 0, 4000);
+    */
 }

@@ -12,20 +12,20 @@ pros::MotorGroup leftMotors({1, 11},
 pros::MotorGroup rightMotors({-10, -20}, pros::MotorGearset::green); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
-pros::Imu imu(15);
+pros::Imu imu(16);
 
 // tracking wheels
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-pros::Rotation verticalEnc(-11);
+pros::Rotation verticalEnc(-14);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, -1.18);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              10, // 10 inch track width
+                              13, // 10 inch track width
                               lemlib::Omniwheel::NEW_4, // using new 4" omnis
-                              360, // drivetrain rpm is 360
+                              200, // drivetrain rpm is 360
                               8 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
 
@@ -84,7 +84,9 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
+    imu.reset(); // reset imu to 0 degrees
     chassis.calibrate(); // calibrate sensors
+    chassis.setPose(0, 0, 90); // set starting pose
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
@@ -119,14 +121,49 @@ void disabled() {}
  */
 void competition_initialize() {}
 
+void autosai() {
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 75, 5000);
+    chassis.turnToHeading(45, 1000);
+    intake.move_velocity(-200);
+    chassis.moveToPose(110, 112, 0, 3000, {.maxSpeed = 90});
+    chassis.turnToHeading(-90, 2000);
+    chassis.moveToPoint(35, 112, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(200);
+    pros::delay(2000);
+}
+
+void autodung() {
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 100, 5000);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(110, 100, 5000);
+    pros::delay(1000);
+    chassis.turnToHeading(-90, 2000);
+    chassis.moveToPoint(35, 90, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(200);
+    pros::delay(2000);
+}
+
 /**
  * Runs in driver control
  */
 void opcontrol() {
+    //autosai();
+    autodung();
     while (true) {
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         chassis.arcade(leftY, rightX);
+
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move_velocity(200);
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
@@ -134,15 +171,23 @@ void opcontrol() {
         } else {
             intake.move_velocity(0);
         }
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
+            chassis.moveToPoint(87, 0, 2000, {.maxSpeed = 90});
+        }
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+            chassis.turnToHeading(0, 2000);
+        }
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+            chassis.moveToPoint(87, 75, 2000);
+        }
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+            chassis.turnToHeading(45, 2000);
+            chassis.moveToPose(110, 112, 0, 2000);
+        }
         pros::delay(25);
     }
-    /*
-    chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 80, 4000);
-    chassis.turnToHeading(-90, 4000); 
-    intake.move_velocity(200);
-    chassis.moveToPose(120, -150, 0, 4000);
-    chassis.moveToPoint(120, -100, 4000);
-    chassis.moveToPose(120, -150, 0, 4000);
-    */
 }

@@ -131,10 +131,11 @@ void autosai() {
     intake.move_velocity(-200);
     chassis.moveToPose(110, 112, 0, 3000, {.maxSpeed = 90});
     chassis.turnToHeading(-90, 2000);
-    chassis.moveToPoint(35, 112, 5000);
+    chassis.moveToPoint(35, 100, 5000);
     chassis.waitUntilDone();
-    intake.move_velocity(200);
-    pros::delay(2000);
+    intake.move_velocity(100);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
 }
 
 void autodung() {
@@ -142,23 +143,108 @@ void autodung() {
     chassis.setPose(0, 0, 90);
     chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
     chassis.turnToHeading(0, 1000);
-    chassis.moveToPoint(87, 100, 5000);
+    chassis.moveToPoint(87, 98, 5000);
     chassis.turnToHeading(90, 1000);
-    chassis.moveToPoint(110, 100, 5000);
+    chassis.moveToPoint(115, 98, 2500, {.maxSpeed = 90});
+    pros::delay(100);
+    chassis.moveToPose(90, 105, 90, 1000, {.forwards = false});
+    chassis.moveToPoint(115, 105, 1000, {.maxSpeed = 90});
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
+}
+
+void auto3bong() {
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 101, 5000);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(115, 101, 2500, {.maxSpeed = 90});
     pros::delay(1000);
     chassis.turnToHeading(-90, 2000);
-    chassis.moveToPoint(35, 90, 5000);
+    chassis.moveToPoint(35, 80, 5000);
     chassis.waitUntilDone();
-    intake.move_velocity(200);
-    pros::delay(2000);
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
+}
+
+void auto_lqd(){
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 98, 5000);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(115, 98, 2500, {.maxSpeed = 90});
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
+}
+
+void auto_peak(){
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 98, 5000);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(115, 98, 2500, {.maxSpeed = 90});
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.turnToHeading(90, 1000);
+    intake.move_velocity(-200); 
+    chassis.moveToPose(115, 115, 90, 5000);
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
+}
+
+void auto_peak2(){
+    intake.move_velocity(-200); 
+    chassis.setPose(0, 0, 90);
+    chassis.moveToPoint(87, 0, 5000, {.maxSpeed = 90});
+    chassis.turnToHeading(0, 1000);
+    chassis.moveToPoint(87, 97, 5000);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(115, 97, 2500, {.maxSpeed = 90});
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.turnToHeading(90, 1000);
+    intake.move_velocity(-200); 
+    chassis.moveToPose(115, 115, 90, 5000);
+    pros::delay(500);
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(35, 80, 5000);
+    chassis.waitUntilDone();
+    intake.move_velocity(130);
+    pros::delay(1000);
+    chassis.moveToPoint(115, 105, 5000, {.forwards = false});
 }
 
 /**
  * Runs in driver control
  */
 void opcontrol() {
-    //autosai();
-    autodung();
+    //autodung();
+    auto_peak2();
     while (true) {
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
